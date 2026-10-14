@@ -18,7 +18,15 @@ vi.mock("@/components/networking", () => ({
   modelHubCall: vi.fn(),
   getConfigFieldSetting: vi.fn(),
   getGlobalLitellmHeaderName: vi.fn(() => "X-Litellm-Key"),
+  getPublicModelHubInfo: vi.fn().mockResolvedValue({
+    docs_title: "Docs",
+    custom_docs_description: null,
+    litellm_version: "1.0.0",
+    useful_links: {},
+  }),
   getProxyBaseUrl: vi.fn(() => "http://localhost:4000"),
+  getGatewayBaseUrl: vi.fn(() => "http://gateway.local:5000"),
+  getUiPageUrl: (url: string) => url,
   getAgentsList: vi.fn(),
   fetchMCPServers: vi.fn(),
   makeMCPPublicCall: vi.fn(),
@@ -292,7 +300,7 @@ describe("ModelHubTable", () => {
     it("shows a decision model how to call it on /v1/systemone, with the docs and the playground", async () => {
       const dialog = await openDetails({ model_group: "jev-latest", providers: ["typesafe"], mode: "evaluation" });
 
-      expect(dialog).toHaveTextContent('"http://localhost:4000/v1/systemone"');
+      expect(dialog).toHaveTextContent('"http://gateway.local:5000/v1/systemone"');
       expect(dialog).toHaveTextContent('headers={"X-Litellm-Key": "Bearer your_api_key"}');
       expect(dialog).not.toHaveTextContent("chat.completions");
       expect(screen.getByRole("link", { name: "How to call decision models" })).toHaveAttribute(
@@ -311,7 +319,7 @@ describe("ModelHubTable", () => {
         false,
       );
 
-      expect(dialog).toHaveTextContent('"http://localhost:4000/v1/systemone"');
+      expect(dialog).toHaveTextContent('"http://gateway.local:5000/v1/systemone"');
       expect(screen.getByRole("link", { name: "How to call decision models" })).toBeInTheDocument();
       expect(screen.queryByRole("link", { name: "Try it in the Playground" })).not.toBeInTheDocument();
     });
@@ -320,6 +328,7 @@ describe("ModelHubTable", () => {
       const dialog = await openDetails({ model_group: "claude-opus-4-8", providers: ["anthropic"], mode: "chat" });
 
       expect(dialog).toHaveTextContent("client.chat.completions.create(");
+      expect(dialog).toHaveTextContent('"http://gateway.local:5000"');
       expect(screen.queryByRole("link", { name: "How to call decision models" })).not.toBeInTheDocument();
     });
   });

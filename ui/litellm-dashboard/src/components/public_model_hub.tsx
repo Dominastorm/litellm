@@ -30,6 +30,7 @@ import Navbar from "./navbar";
 import {
   agentHubPublicModelsCall,
   skillHubPublicCall,
+  getGatewayBaseUrl,
   getGlobalLitellmHeaderName,
   getProxyBaseUrl,
   getPublicModelHubInfo,
@@ -1268,7 +1269,7 @@ import asyncio
 config = {
     "mcpServers": {
         "${selectedMcpServer.server_name}": {
-            "url": "${getProxyBaseUrl()}/${selectedMcpServer.server_name}/mcp",
+            "url": "${getGatewayBaseUrl()}/${selectedMcpServer.server_name}/mcp",
             "headers": {
                 "x-litellm-api-key": "Bearer <your-master-key>"
             }
@@ -1308,7 +1309,7 @@ import asyncio
 config = {
     "mcpServers": {
         "${selectedMcpServer.server_name}": {
-            "url": "${getProxyBaseUrl()}/${selectedMcpServer.server_name}/mcp",
+            "url": "${getGatewayBaseUrl()}/${selectedMcpServer.server_name}/mcp",
             "headers": {
                 "x-litellm-api-key": "Bearer <your-master-key>"
             }
