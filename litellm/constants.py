@@ -1766,6 +1766,7 @@ LITELLM_LOGGING_NO_UPSTREAM_LLM_CALL: Final = "litellm_no_upstream_llm_call"
 # out of ``user_api_key_auth_metadata``) and proxy request setup (which re-applies
 # the key's values after the team metadata merge so a key outranks its team).
 OTEL_SERVICE_NAME_METADATA_KEYS: Final = ("otel_service_name_override", "otel_service_name")
+OTEL_V2_INTEGRATION_MODULE_PREFIX: Final = "litellm.integrations.otel."
 
 # Key Rotation Constants
 LITELLM_KEY_ROTATION_ENABLED: Final = os.getenv("LITELLM_KEY_ROTATION_ENABLED", "false")

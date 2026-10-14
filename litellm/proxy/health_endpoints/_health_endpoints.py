@@ -17,7 +17,11 @@ from typing_extensions import ReadOnly
 
 import litellm
 from litellm._logging import verbose_logger, verbose_proxy_logger
-from litellm.constants import HEALTH_CHECK_TIMEOUT_SECONDS, PROXY_DB_LOOKUP_STALL_WINDOW_SECONDS
+from litellm.constants import (
+    HEALTH_CHECK_TIMEOUT_SECONDS,
+    OTEL_V2_INTEGRATION_MODULE_PREFIX,
+    PROXY_DB_LOOKUP_STALL_WINDOW_SECONDS,
+)
 from litellm.integrations.SlackAlerting.ms_teams import (
     MS_TEAMS_ALERT_HEADERS,
     build_ms_teams_payload,
@@ -303,7 +307,13 @@ def _callback_matches(service: str, cb: object) -> bool:
     callback_name: Final = getattr(cb, "callback_name", None)
     if service in (cb, callback_name, get_callback_identifier(cb)):
         return True
-    return not callback_name and service in CustomLoggerRegistry.get_all_callback_strs_from_class_type(type(cb))
+    return not callback_name and service in _unnamed_callback_aliases(type(cb))
+
+
+def _unnamed_callback_aliases(callback_type: type) -> tuple[str, ...]:
+    if callback_type.__module__.startswith(OTEL_V2_INTEGRATION_MODULE_PREFIX):
+        return ("otel",)
+    return tuple(CustomLoggerRegistry.get_all_callback_strs_from_class_type(callback_type))
 
 
 def _service_configured_in(service: str, callbacks: Sequence[object]) -> bool:
